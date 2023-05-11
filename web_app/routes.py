@@ -8,8 +8,8 @@ import pickle
 movies_encoded_data = pd.read_csv('data/source/movies_encoded_data.csv')
 movies_info_data = pd.read_csv('data/source/movies_info_data.csv')
 
-movies_nn_model = pickle.load(open('nn_model_movies.pkl', 'rb'))
-movies_ratings_scaler = pickle.load(open('movies_rating_scaler.pkl', 'rb'))
+movies_nn_model = pickle.load(open('models/nn_model_movies.pkl', 'rb'))
+movies_ratings_scaler = pickle.load(open('models/movies_rating_scaler.pkl', 'rb'))
 
 movies_input_dict = {}
 for col in movies_encoded_data.columns:
