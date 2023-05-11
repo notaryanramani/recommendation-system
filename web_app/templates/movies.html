@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Welcome to Movies Recommendation</h3>
+    <form method="post" action="{{ url_for('movies') }}">
+        
+        <label for="ratings_count">Ratings Count: </label>
+        <input type="text" id="ratings_count" name="ratings_count"/> <br>
+
+        <label for="ratings_average">Ratings Average: </label>
+        <input type="text" id="ratings_average" name="ratings_average"/> <br>
+
+        <label for="genres">Genres: </label>
+        <input type="text" id="genres" name="genres"/> <br>
+
+        <button type="submit">Submit</button>
+
+    </form>
+    {% if recs %}
+    <h3> Recommendations: </h3>
+    <ol>
+        {% for rec in recs %}
+        <li> {{ rec }} </li>
+        {% endfor %}
+    {% endif %}
+    </ol>
+
+</body>
+</html>
