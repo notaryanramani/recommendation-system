@@ -30,6 +30,54 @@
         {% endfor %}
     {% endif %}
     </ol>
+    <br>
+    <br>
+    <br>
+    <form method='post' action="{{ url_for('movies_name') }} ">
+        <label for="user_input"> Enter Movie Name: </label>
+        <textarea name="user_input" id="user_input" cols="30" rows="1" placeholder="Movie Name...." wrap="off"></textarea>
+        <br>
+        <input type="radio" name="opt" id="opt1" value="top5"> 
+        <label for="opt1">Top 5 Recommendations</label>
+        &emsp;
+        <input type="radio" name="opt" id="opt2" value="random5">
+        <label for="opt2">Random Recommendations</label>
+        <br>
+        <button type="submit">Submit</button><br>
+    </form>
+    <div id="display">
 
+    </div>
+
+    <div>
+        
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <p>
+        {{ message }}
+    </p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    </div>
+
+
+
+
+
+    <script type="text/javascript">
+        var list = new Array();
+        var text_box = document.querySelector('#user_input');
+        var display = document.querySelector('#display');
+        console.log('running');
+        `{% for item in movies_list %}`
+        list.push(`{{item}}`);
+        `{% endfor %}`
+    </script>
+    <script src="{{ url_for('static', filename='js/index.js') }}">
+
+    </script>
 </body>
 </html>
