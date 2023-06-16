@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from web_app import app
 import html
 
@@ -35,8 +35,9 @@ def movies():
     movies_list = movies_info_data['title'].sort_values(ascending=True)
     recs = None
     if request.method == 'POST':
-        v = int(request.form.get('ratings_count'))
-        R = int(request.form.get('ratings_average'))
+        option = request.form.get('opt')
+        v = m
+        R = C
         weighted_avg = ((R * v) + (C * m)) / (v + m) 
         movies_input_dict['RATING_COUNT'] = movies_ratings_scaler.transform(np.array(v).reshape(1,-1))[0][0]
         movies_input_dict['RATING_AVG'] = R
@@ -48,10 +49,21 @@ def movies():
                 movies_input_dict[temp_genre] = 1
         # print(movies_input_dict)
         sample = np.array(list(movies_input_dict.values())).reshape(1, -1)
-        distances, indices = movies_nn_model.kneighbors(sample, n_neighbors = 5)
-        recs = []
-        for i in indices.flatten():
-            recs.append(movies_info_data.iloc[i]['title'])
+        if option == 'top5':
+            distances, indices = movies_nn_model.kneighbors(sample, n_neighbors = 5)
+            recs = []
+            for i in range(0, len(indices.flatten())):
+                rec = movies_info_data.iloc[indices.flatten()[i]]['title']
+                recs.append(rec)
+        elif option == 'random5':
+            random_nums = np.random.randint(0, 100, 5)
+            distances, indices = movies_nn_model.kneighbors(sample, n_neighbors = 100)
+            recs = []
+            for i in random_nums:
+                rec = movies_info_data.iloc[indices.flatten()[i]]['title']
+                recs.append(rec)
+        else:
+            flash('Choose Option')
     return render_template('movies.html', recs = recs, movies_list = movies_list)
 
 
@@ -110,3 +122,68 @@ def books():
         else:
             flash('Choose Option')
     return render_template('books.html', recs=recs, books_titles=books_titles)
+
+
+# APIs
+
+@app.route('/movies-api', methods=['POST'])
+def movies_api():
+    data = request.json['data']
+    movie_name = data['name']
+    rec_type = data['type']
+    recs = []
+    try: 
+        movie_index = movies_info_data.loc[movies_info_data['title'] == movie_name].index[0]
+        sample = np.array(movies_encoded_data.iloc[movie_index]).reshape(1, -1)
+        if rec_type == 't':
+            distances, indices = movies_nn_model.kneighbors(sample, n_neighbors = 6)
+            for i in range(0, len(indices.flatten())):
+                rec = movies_info_data.iloc[indices.flatten()[i]]['title']
+                if rec != movie_name:
+                    recs.append(rec)
+            recommendations = {'name': movie_name, 'recommendations':recs}
+        elif rec_type == 'r':
+            random_nums = np.random.randint(0, 100, 5)
+            distances, indices = movies_nn_model.kneighbors(sample, n_neighbors = 100)
+            recs = []
+            for i in random_nums:
+                rec = movies_info_data.iloc[indices.flatten()[i]]['title']
+                if rec != movie_name:
+                    recs.append(rec)
+            recommendations = {'name': movie_name, 'recommendations':recs}
+        else:
+            recommendations = {'error' : 'Wrong recommendation type value'}
+    except:
+        recommendations = {'error' : 'Movie not found'}
+    return jsonify(recommendations)
+
+@app.route('/books-api', methods=['POST'])
+def books_api():
+    data = request.json['data']
+    book_name = data['name']
+    rec_type = data['type']
+    recs = []
+    try:
+        sample = np.array(books_data.loc[books_data.index == book_name]).reshape(1, -1)
+        if rec_type == 't':
+            distances, indices = books_nn_model.kneighbors(sample, n_neighbors = 6)
+            for i in range(0, len(indices.flatten())):
+                rec = books_data.iloc[indices.flatten()[i]].name
+                if rec != book_name:
+                    recs.append(rec)
+            recommendations = {'name': book_name, 'recommendations':recs}
+        elif rec_type == 'r':
+            random_nums = np.random.randint(0, 100, 5)
+            distances, indices = books_nn_model.kneighbors(sample, n_neighbors = 100)
+            recs = []
+            for i in random_nums:
+                rec = books_data.iloc[indices.flatten()[i]].name
+                if rec != book_name:
+                    recs.append(rec)
+            recommendations = {'name': book_name, 'recommendations':recs}
+        else:
+            recommendations = {'error' : 'Wrong recommendation type value'}
+    except:
+        recommendations = {'error' : 'Book not found'}
+
+    return jsonify(recommendations)

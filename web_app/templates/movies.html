@@ -7,17 +7,30 @@
     <title>Document</title>
 </head>
 <body>
+    <div id="popup">
+        
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <p>
+            {{ message }} <button id="close" style="text-align: right;">X</button>
+        </p>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    
+    </div>
     <h3>Welcome to Movies Recommendation</h3>
     <form method="post" action="{{ url_for('movies') }}">
-        
-        <label for="ratings_count">Ratings Count: </label>
-        <input type="text" id="ratings_count" name="ratings_count"/> <br>
-
-        <label for="ratings_average">Ratings Average: </label>
-        <input type="text" id="ratings_average" name="ratings_average"/> <br>
 
         <label for="genres">Genres: </label>
         <input type="text" id="genres" name="genres"/> <br>
+        <input type="radio" name="opt" id="opt1" value="top5"> 
+        <label for="opt1">Top 5 Recommendations</label>
+        &emsp;
+        <input type="radio" name="opt" id="opt2" value="random5">
+        <label for="opt2">Random Recommendations</label>
+        <br>
 
         <button type="submit">Submit</button>
 
@@ -48,24 +61,6 @@
     <div id="display">
 
     </div>
-
-    <div>
-        
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    {% for message in messages %}
-    <p>
-        {{ message }}
-    </p>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-
-    </div>
-
-
-
-
 
     <script type="text/javascript">
         var list = new Array();

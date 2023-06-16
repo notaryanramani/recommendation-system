@@ -6,7 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
+<body><div id="popup">
+        
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <p>
+        {{ message }} <button id="close" style="text-align: right;">X</button>
+    </p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+</div>
     <h3>Welcome to Books Recommendation</h3>
     <form method='post' action="{{ url_for('books') }} ">
         <label for="user_input"> Enter Movie Name: </label>
@@ -24,19 +36,6 @@
 
     </div>
 
-    <div>
-        
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    {% for message in messages %}
-    <p>
-        {{ message }}
-    </p>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-
-    </div>
 
     <p>
         {% if recs %}
