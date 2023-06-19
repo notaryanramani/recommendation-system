@@ -16,7 +16,17 @@
 
 <body>
 
-
+  <div id="popup">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      {% for message in messages %}
+      
+          {{ message }} &emsp;&emsp;<span id="close">  X  </span>
+      
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+  </div>
 
      <!-- For animated background -->
 
@@ -115,6 +125,9 @@
 
       </div>
       <script type="text/javascript">
+      
+
+
         var list = new Array();
         var text_box = document.querySelector('#user_input');
         var display = document.querySelector('#display');
@@ -122,9 +135,22 @@
         `{% for item in books_titles %}`
         list.push(`{{item}}`);
         `{% endfor %}`
+
     </script>
     <script src="{{ url_for('static', filename='js/index.js') }}">
 
+    </script>
+
+    <script type="text/javascript">
+      const popup = document.getElementById('popup');
+      const closeButton = document.getElementById('close');
+      if (closeButton){
+        closeButton.style.cursor = 'pointer';
+        closeButton.addEventListener('click', function(){
+          popup.style.display = 'none';
+      })
+      }
+      
     </script>
 
 </body>

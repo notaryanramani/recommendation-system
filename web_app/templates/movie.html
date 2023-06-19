@@ -160,14 +160,15 @@
   </script>
       
   <script type='text/javascript'>
-    const popup = document.querySelector('#popup');
-    const closeButton = document.querySelector('#close');
+    const popup = document.getElementById('popup');
+    const closeButton = document.getElementById('close');
 
-    closeButton.style.cursor = 'pointer';
-
-    closeButton.addEventListener('click', function(){
-        popup.style.display = 'none';
-    })
+    if (closeButton){
+        closeButton.style.cursor = 'pointer';
+        closeButton.addEventListener('click', function(){
+          popup.style.display = 'none';
+      })
+      }
 
     var genre_list = new Array();
     var genre_text_box = document.querySelector('#genres');

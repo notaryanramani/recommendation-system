@@ -76,7 +76,8 @@ def movies_name():
     if request.method == 'POST':
         option = request.form.get('opt')
         movie_name = html.unescape(request.form.get('user_input'))
-        if movie_name in movies_list:
+        print(movie_name)
+        if movie_name in movies_list.values:
             movie_index = movies_info_data.loc[movies_info_data['title'] == movie_name].index[0]
             sample = np.array(movies_encoded_data.iloc[movie_index]).reshape(1, -1)
             if option == 'top5':

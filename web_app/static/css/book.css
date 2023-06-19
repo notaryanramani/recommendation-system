@@ -367,7 +367,10 @@ button:hover{
 }
 
 
-
+#popup {
+    color: red;
+    background-color: white;
+}
 
 
 
