@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Book Recommendations</title>
+
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/book.css')}}">
+
+</head>
+
+<body>
+
+
+
+     <!-- For animated background -->
+
+     <div class="area" >
+
+        <ul class="circles">
+
+                <li></li>
+
+                <li></li>
+
+                <li></li>
+
+                <li></li>
+
+                <li></li>
+
+                <li></li>
+
+                <li></li>
+
+                <li></li>
+
+                <li></li>
+
+                <li></li>
+
+        </ul>
+
+    </div >
+
+
+
+    <h1>Book Recommender</h1>
+
+    <div class="container">
+
+        <div class="inputarea">
+
+
+
+            <div class="byname">
+
+                <h3>Search Book</h3>
+
+                <form method='post' action="{{ url_for('books') }} ">
+                  <label for="user_input"> Enter Book Name: </label>
+                  <textarea name="user_input" id="user_input" cols="30" rows="1" placeholder="Book Name...." wrap="off" style="height: 20px;"></textarea>
+                  <br>
+                  <div id="display" style="height: 140px;">
+
+                  </div>
+                  <input type="radio" name="opt" id="opt1" value="top5"> 
+                  <label for="opt1">Top 5 Recommendations</label>
+                  &emsp;
+                  <input type="radio" name="opt" id="opt2" value="random5">
+                  <label for="opt2">Random Recommendations</label>
+                  <br>
+                  <button type="submit">Recommendation</button><br>
+              </form>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="outputarea">
+
+            <p class="output">Recommendations</p>
+            
+
+        </div>
+        {% if recs %}
+          
+            {% for rec in recs %}
+            <p> {{ rec }} </p>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+
+
+
+    <div class="extraBtns">
+
+        <div id="bookrec">
+
+          <button id="bookButton" onclick="window.location.href = '/movies';">
+
+            Movie Recommender
+
+          </button>
+
+        </div>
+
+      </div>
+      <script type="text/javascript">
+        var list = new Array();
+        var text_box = document.querySelector('#user_input');
+        var display = document.querySelector('#display');
+        console.log('running');
+        `{% for item in books_titles %}`
+        list.push(`{{item}}`);
+        `{% endfor %}`
+    </script>
+    <script src="{{ url_for('static', filename='js/index.js') }}">
+
+    </script>
+
+</body>
+
+</html>

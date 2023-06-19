@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+  <head>
+
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Movie Recommendations</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/movie.css') }}" />
+
+  </head>
+
+  <body>
+    
+    <div id="popup">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        
+            {{ message }} &emsp;&emsp;<span id="close">  X  </span>
+        
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+    <!-- For animated background -->
+
+    <div class="area">
+
+      <ul class="circles">
+
+        <li></li>
+
+        <li></li>
+
+        <li></li>
+
+        <li></li>
+
+        <li></li>
+
+        <li></li>
+
+        <li></li>
+
+        <li></li>
+
+        <li></li>
+
+        <li></li>
+
+      </ul>
+
+    </div>
+
+
+
+    <h1>Movie Recommender</h1>
+
+    <div class="container">
+
+      <div class="inputarea">
+
+        <div class="bygenre">
+
+          <h3>By Genre</h3>
+
+
+          <form method="post" action="{{ url_for('movies') }}">
+            <label for="genres">Genres: </label>
+            <input type="text" id="genres" name="genres"/> <br>
+            <div id="genre_search" class="search_result">
+            </div>
+            <label>Gerne Selected: <input id='genre_sent' name='genre_sent' style="width:70%;" readonly></label>
+            <br>
+            <input type="radio" name="opt" id="opt1" value="top5"> 
+            <label for="opt1">Top 5 Recommendations</label>
+            &emsp;
+            <input type="radio" name="opt" id="opt2" value="random5">
+            <label for="opt2">Random Recommendations</label>
+            <br>
+    
+            <button type="submit" class="button">Search by Genre</button>
+          </form>
+        </div>
+
+
+
+        <div class="byname">
+
+          <h3>By Name</h3>
+
+          <form method='post' action="{{ url_for('movies_name') }} ">
+            <label for="user_input"> Enter Movie Name: </label>
+            <textarea name="user_input" id="user_input" cols="30" rows='1' placeholder="Movie Name...." wrap="off"></textarea>
+            <br>
+            <div class="search_result" id="display">
+            </div>
+            <input type="radio" name="opt" id="opt1" value="top5"> 
+            <label for="opt1">Top 5 Recommendations</label>
+            &emsp;
+            <input type="radio" name="opt" id="opt2" value="random5">
+            <label for="opt2">Random Recommendations</label>
+            <br>
+            <button type="submit">Search by Movie Name</button><br>
+        </form>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="outputarea">
+
+        <p class="output">Recommendations</p>
+      </div>
+      {% if recs %}
+        {% for rec in recs %}
+        <p>  {{ rec }} </p>
+        {% endfor %}
+        {% endif %}
+
+    </div>
+
+
+
+    <div class="extraBtns">
+
+      
+
+      <div id="bookrec">
+        
+
+        <button id="bookButton" onclick="window.location.href = '/books';">
+
+          Book Recommender
+
+          
+        </button>
+        
+
+      </div>
+
+    </div>
+
+    <script type="text/javascript">
+      var list = new Array();
+      var text_box = document.querySelector('#user_input');
+      var display = document.querySelector('#display');
+      `{% for item in movies_list %}`
+      list.push(`{{item}}`);
+      `{% endfor %}`
+  </script>
+  <script src="{{ url_for('static', filename='js/index.js') }}">
+  </script>
+      
+  <script type='text/javascript'>
+    const popup = document.querySelector('#popup');
+    const closeButton = document.querySelector('#close');
+
+    closeButton.style.cursor = 'pointer';
+
+    closeButton.addEventListener('click', function(){
+        popup.style.display = 'none';
+    })
+
+    var genre_list = new Array();
+    var genre_text_box = document.querySelector('#genres');
+    var genre_display = document.querySelector('#genre_search');
+    var genre_sent = document.querySelector('#genre_sent');
+    var result_list = new Array();
+    `{% for item in genre_list %}`
+      genre_list.push(`{{item}}`);
+    `{% endfor %}`
+
+    genre_text_box.addEventListener('input', function(){
+        var count = 0;
+        var temp_list = new Array();
+        for(i=0; i < genre_list.length; i++)
+            temp_list[i] = genre_list[i]
+        var text = this.value.toLowerCase();
+        var text_list = text.split(',');
+        var search_text = text_list[text_list.length - 1];
+        genre_display.innerHTML = '';
+        console.log(genre_list);
+        console.log(search_text)
+        if(search_text != ''){
+          for(var i=0; i<temp_list.length; i++){
+            e = temp_list[i].toLowerCase();
+            if(e.includes(search_text)){
+              const p = document.createElement('p');
+              p.setAttribute('class', 'genre_result');
+              p.innerHTML = e;
+              genre_display.append(p);
+              count++;
+            }
+            if (count == 4)
+                break;
+          }
+      add_genre_events();
+        }
+    })
+
+    function add_genre_events(){
+        const p_tags = document.querySelectorAll('p.genre_result');
+        p_tags.forEach(e => {
+            e.addEventListener('click', function(){
+              if(!(result_list.includes(e)))
+                result_list.push(e.innerHTML)
+              genre_sent.value = result_list.toString();
+            })
+        })
+    }
+  </script>
+
+  </body>
+
+</html>
+

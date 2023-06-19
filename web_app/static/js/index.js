@@ -48,11 +48,4 @@ document.addEventListener('DOMContentLoaded', function(){
         if(e.keyCode == 13)
             e.preventDefault();
     })
-
-    const popup = document.querySelector('#popup');
-    const closeButton = document.querySelector('#close');
-
-    closeButton.addEventListener('click', function(){
-        popup.style.display = 'none';
-    })
 })

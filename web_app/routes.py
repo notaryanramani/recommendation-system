@@ -19,6 +19,8 @@ movies_input_dict = {}
 for col in movies_encoded_data.columns:
     movies_input_dict[col.upper()] = 0
 
+
+
 m = 9
 C = 3.26
 # determined from data used
@@ -27,7 +29,7 @@ C = 3.26
 
 @app.route('/')
 def home(): 
-    return render_template('home.html')
+    return render_template('index.html')
 
 
 @app.route('/movies', methods=['POST', 'GET'])
@@ -42,7 +44,7 @@ def movies():
         movies_input_dict['RATING_COUNT'] = movies_ratings_scaler.transform(np.array(v).reshape(1,-1))[0][0]
         movies_input_dict['RATING_AVG'] = R
         movies_input_dict['WEIGHTED_AVG'] = weighted_avg
-        genres = request.form.get('genres').split(',')
+        genres = request.form.get('genre_sent').split(',')
         for genre in genres:
             temp_genre = genre.lstrip().rstrip().upper()
             if temp_genre in movies_input_dict.keys():
@@ -64,7 +66,7 @@ def movies():
                 recs.append(rec)
         else:
             flash('Choose Option')
-    return render_template('movies.html', recs = recs, movies_list = movies_list)
+    return render_template('movie.html', recs = recs, movies_list = movies_list, genre_list = movies_encoded_data.columns[3:])
 
 
 @app.route('/movies_name', methods=['POST', 'GET'])
@@ -74,26 +76,29 @@ def movies_name():
     if request.method == 'POST':
         option = request.form.get('opt')
         movie_name = html.unescape(request.form.get('user_input'))
-        movie_index = movies_info_data.loc[movies_info_data['title'] == movie_name].index[0]
-        sample = np.array(movies_encoded_data.iloc[movie_index]).reshape(1, -1)
-        if option == 'top5':
-            distances, indices = movies_nn_model.kneighbors(sample, n_neighbors = 6)
-            recs = []
-            for i in range(0, len(indices.flatten())):
-                rec = movies_info_data.iloc[indices.flatten()[i]]['title']
-                if rec != movie_name:
-                    recs.append(rec)
-        elif option == 'random5':
-            random_nums = np.random.randint(0, 100, 5)
-            distances, indices = movies_nn_model.kneighbors(sample, n_neighbors = 100)
-            recs = []
-            for i in random_nums:
-                rec = movies_info_data.iloc[indices.flatten()[i]]['title']
-                if rec != movie_name:
-                    recs.append(rec)
+        if movie_name in movies_list:
+            movie_index = movies_info_data.loc[movies_info_data['title'] == movie_name].index[0]
+            sample = np.array(movies_encoded_data.iloc[movie_index]).reshape(1, -1)
+            if option == 'top5':
+                distances, indices = movies_nn_model.kneighbors(sample, n_neighbors = 6)
+                recs = []
+                for i in range(0, len(indices.flatten())):
+                    rec = movies_info_data.iloc[indices.flatten()[i]]['title']
+                    if rec != movie_name:
+                        recs.append(rec)
+            elif option == 'random5':
+                random_nums = np.random.randint(0, 100, 5)
+                distances, indices = movies_nn_model.kneighbors(sample, n_neighbors = 100)
+                recs = []
+                for i in random_nums:
+                    rec = movies_info_data.iloc[indices.flatten()[i]]['title']
+                    if rec != movie_name:
+                        recs.append(rec)
+            else:
+                flash('Choose Option')
         else:
-            flash('Choose Option')
-    return render_template('movies.html', recs = recs, movies_list = movies_list)
+            flash('Wrong Movie Name')
+    return render_template('movie.html', recs = recs, movies_list = movies_list, genre_list=movies_encoded_data.columns[3:])
 
 
 @app.route('/books', methods=['POST', 'GET'])
@@ -103,25 +108,28 @@ def books():
     if request.method == 'POST':
         option = request.form.get('opt')
         book_name = html.unescape(request.form.get('user_input'))
-        sample = np.array(books_data.loc[books_data.index == book_name]).reshape(1, -1)
-        if option == 'top5':
-            distances, indices = books_nn_model.kneighbors(sample, n_neighbors = 6)
-            recs = []
-            for i in range(0, len(indices.flatten())):
-                rec = books_data.iloc[indices.flatten()[i]].name
-                if rec != book_name:
-                    recs.append(rec)
-        elif option == 'random5':
-            random_nums = np.random.randint(0, 100, 5)
-            distances, indices = books_nn_model.kneighbors(sample, n_neighbors = 100)
-            recs = []
-            for i in random_nums:
-                rec = books_data.iloc[indices.flatten()[i]].name
-                if rec != book_name:
-                    recs.append(rec)
+        if book_name in books_titles:
+            sample = np.array(books_data.loc[books_data.index == book_name]).reshape(1, -1)
+            if option == 'top5':
+                distances, indices = books_nn_model.kneighbors(sample, n_neighbors = 6)
+                recs = []
+                for i in range(0, len(indices.flatten())):
+                    rec = books_data.iloc[indices.flatten()[i]].name
+                    if rec != book_name:
+                        recs.append(rec)
+            elif option == 'random5':
+                random_nums = np.random.randint(0, 100, 5)
+                distances, indices = books_nn_model.kneighbors(sample, n_neighbors = 100)
+                recs = []
+                for i in random_nums:
+                    rec = books_data.iloc[indices.flatten()[i]].name
+                    if rec != book_name:
+                        recs.append(rec)
+            else:
+                flash('Choose Option')
         else:
-            flash('Choose Option')
-    return render_template('books.html', recs=recs, books_titles=books_titles)
+            flash('Wrong Book Name')
+    return render_template('book.html', recs=recs, books_titles=books_titles)
 
 
 # APIs
