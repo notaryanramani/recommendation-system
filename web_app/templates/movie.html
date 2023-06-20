@@ -188,8 +188,6 @@
         var text_list = text.split(',');
         var search_text = text_list[text_list.length - 1];
         genre_display.innerHTML = '';
-        console.log(genre_list);
-        console.log(search_text)
         if(search_text != ''){
           for(var i=0; i<temp_list.length; i++){
             e = temp_list[i].toLowerCase();
@@ -211,9 +209,11 @@
         const p_tags = document.querySelectorAll('p.genre_result');
         p_tags.forEach(e => {
             e.addEventListener('click', function(){
-              if(!(result_list.includes(e)))
-                result_list.push(e.innerHTML)
+              console.log(result_list)
+              if(!(result_list.includes(e.innerHTML)))
+                result_list.push(e.innerHTML);
               genre_sent.value = result_list.toString();
+              genre_text_box.focus();
             })
         })
     }
