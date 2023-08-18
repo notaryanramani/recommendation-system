@@ -4,4 +4,4 @@
 
 *Stay tuned for Further Updates*
 
-Contributed by Aryan Ramani 
+Contributed by Aryan Ramani and Chetan Singh
